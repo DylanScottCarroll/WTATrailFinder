@@ -10,3 +10,8 @@ Paste a list of links into a text file nammed "urls.txt" and then launch the pyt
 ## Things to keep in mind:
 * All of the urls need to begin with https://www.wta.org as copy+pasted from a browser
 * Some WTA pages aren't for trails and thus don't have all of the data points. These pages cannot be parsed by the program and will cause it to crash. I am working on a fix for this.
+
+## Todo:
+
+* Include description in csv sheet
+* Calculate driving distance from a given point
