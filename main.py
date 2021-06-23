@@ -7,19 +7,24 @@ def get_data(soup, url):
     Takes as input a beautiful soup object and returns a tuple. All values are strings.
     Tuple format: (Length, Elevation Gain, Highest Point, Location, Rating out of 5, url)"""
 
-    stats = soup.find_all("div", class_="hike-stat")
+    try:
+        stats = soup.find_all("div", class_="hike-stat")
 
-    location = stats[0].find("div").get_text().split(", ")[0]
+        location = stats[0].find("div").get_text().split(", ")[0]
 
-    length = stats[1].find("div", id="distance").find("span").get_text().split(", ")[0]
+        length = stats[1].find("div", id="distance").find("span").get_text().split(", ")[0]
 
-    height = stats[2].find_all("div")
-    elev_gain = height[0].find("span").get_text() + " ft."
-    highest = height[1].find("span").get_text() + " ft."
+        height = stats[2].find_all("div")
+        elev_gain = height[0].find("span").get_text() + " ft."
+        highest = height[1].find("span").get_text() + " ft."
 
-    rating = soup.find("div", class_="current-rating").get_text().split(" out of ")[0]
+        rating = soup.find("div", class_="current-rating").get_text().split(" out of ")[0]
 
-    return(length, elev_gain, highest, location, rating, url)
+        print((length, elev_gain, highest, location, rating))
+        return	(length, elev_gain, highest, location, rating, url)
+    
+    except IndexError:
+        return None
 
 def extract_datas(urls):
     """
@@ -27,8 +32,12 @@ def extract_datas(urls):
     Returns a list of tuples containing the data.
     Tuple format: (Length, Elevation Gain, Highest Point, Location, Rating out of 5, url)"""
 
-    texts = [(requests.get(url).text, url) for url in urls]
+    texts = []
+    for url in urls:
+        print(url)
+        texts.append((requests.get(url).text, url))
 
+    
     return [get_data(BeautifulSoup(text, "html.parser"), url) for text, url in texts]
 
 
@@ -39,7 +48,7 @@ def assemble_csv(datas):
 
     string = "Length,Elevation Gain,Highest Point,Location,Rating\n"
 
-    string += "\n".join([",".join(data) for data in datas])
+    string += "\n".join([",".join(data) for data in datas if data is not None])
 
     return string
 
